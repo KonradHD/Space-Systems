@@ -126,3 +126,30 @@ class Frame:
                           f'{ids.DataTypeID(self.data_type).name}',
                           f'{ids.OperationID[device_name].value(self.operation).name}',
                           f'{self.payload})')).lower()
+    
+    # added  
+    def reverse_servos_relays_status(self) -> 'Frame':
+        device_name = ids.DeviceID(self.device_type).name
+        if device_name == "SERVO":
+             return Frame(destination=self.destination,
+                priority=self.priority,
+                action=self.action,
+                source=self.source,
+                device_type=self.device_type,
+                device_id=self.device_id,
+                data_type=self.data_type,
+                operation=self.operation,
+                payload=(100,) if self.payload[0] == 0 else (0,))
+        if device_name == "RELAY":
+             return Frame(destination=self.destination,
+                priority=self.priority,
+                action=self.action,
+                source=self.source,
+                device_type=self.device_type,
+                device_id=self.device_id,
+                data_type=self.data_type,
+                operation=ids.OperationID.RELAY.value.CLOSE if self.operation == ids.OperationID.RELAY.value.OPEN else ids.OperationID.RELAY.value.OPEN,
+                payload=self.payload)
+        if device_name == "SENSOR":
+            return self
+        return None

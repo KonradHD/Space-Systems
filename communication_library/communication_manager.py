@@ -96,7 +96,7 @@ class CommunicationManager:
             self._callbacks[frame] = callback
 
     def unregister_callback(self, frame: Frame):
-        frame = frame.as_reversed_frame()
+        #frame = frame.as_reversed_frame()
         self._callbacks.pop(frame, None)
 
     def clear_callbacks(self):
