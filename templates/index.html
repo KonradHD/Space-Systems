@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Game</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="../static/script.js" defer></script>
+</head>
+<body>
+    <img class="background" src="../static/images/cosmos.jpg" alt="background"> 
+    <main>
+        <h1>Rocket Game</h1>
+        <section class="rules">
+            <h3>Zasady gry</h3>
+            <div>
+                <p>Ułóż puzle w dobrej kolejności, tak żeby rakieta bezpiecznie wystartowała</p>
+                <img class="big-rocket" src="../static/images/rocket.png" alt="Big rocket photo">
+            </div>
+        </section>
+
+        <section class="puzzle-zone">
+            <h2>Twoje zadanie</h2>
+            <div class="buttons-container">
+                <button class="b1 answer" draggable="true">Open oxidizer intake</button>
+                <div class="slot"></div>
+                <button class="b2 answer" draggable="true">Register oxidizer level</button>
+                <div class="slot"></div>
+                <button class="b3 answer" draggable="true">Wait till oxidizer level will be 100%</button>
+                <div class="slot"></div>
+                <button class="b4 answer" draggable="true">Close oxidizer intake</button>
+                <div class="slot"></div>
+                <button class="b5 answer" draggable="true">Unregister oxidizer level</button>
+                <div class="slot"></div>
+                <button class="b6 answer" draggable="true">Open fuel intake</button>
+                <div class="slot"></div>
+                <button class="b7 answer" draggable="true">Register fuel level</button>
+                <div class="slot"></div>
+                <button class="b8 answer"draggable="true">Wait till fuel level will be 100%</button>
+                <div class="slot"></div>
+                <button class="b9 answer"draggable="true">Close fuel intake</button>
+                <div class="slot"></div>
+            </div>
+
+        <h3>Ułóż kolejność:</h3>
+            <div class="slots-container">
+                <div class="valid-slot" data-slot="1"></div>
+                <div class="valid-slot" data-slot="2"></div>
+                <div class="valid-slot" data-slot="3"></div>
+                <div class="valid-slot" data-slot="4"></div>
+                <div class="valid-slot" data-slot="5"></div>
+                <div class="valid-slot" data-slot="6"></div>
+                <div class="valid-slot" data-slot="7"></div>
+                <div class="valid-slot" data-slot="8"></div>
+                <div class="valid-slot" data-slot="9"></div>
+            </div>
+        </section>
+        <button id="check" class="check-btn">Sprawdź ułożenie</button>
+    </main>
+</body>
+</html>

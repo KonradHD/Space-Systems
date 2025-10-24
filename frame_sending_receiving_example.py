@@ -3,17 +3,19 @@ from communication_library.tcp_transport import TcpSettings
 from communication_library.frame import Frame
 from communication_library import ids
 from communication_library.exceptions import TransportTimeoutError, TransportError, UnregisteredCallbackError
+from commands import Command
 
 def on_altitude(frame: Frame):
     print(f"Registered frame received: {frame}")
 
 if __name__ == "__main__":
+    cmd = Command()
     max_altitude = 0.0
     g = 9.81
     v_max = 30
     heater_open = False
-    cm = CommunicationManager() # Class responsible for communication handling
-    cm.change_transport_type(TransportType.TCP)
+    #cm = CommunicationManager() # Class responsible for communication handling
+    #cm.change_transport_type(TransportType.TCP)
     # We must create a frame that will serve as a pattern indicating what kind of frames we want to receive
     # During frame equality comparison the following fields are excluded: priority, data_type, payload
     # You can find more information in communication_library/frame.py
@@ -44,7 +46,7 @@ if __name__ == "__main__":
                                     1, # oxidizer level
                                     ids.DataTypeID.FLOAT,
                                     ids.OperationID.SENSOR.value.READ)
-    cm.register_callback(on_altitude, oxidizer_level_frame)
+    #cm.register_callback(on_altitude, oxidizer_level_frame)
 
     fuel_level_frame = Frame(ids.BoardID.SOFTWARE,
                                     ids.PriorityID.LOW,
@@ -64,7 +66,7 @@ if __name__ == "__main__":
                                     ids.DataTypeID.FLOAT,
                                     ids.OperationID.SENSOR.value.READ)
 
-    cm.connect(TcpSettings("127.0.0.1", 3000))
+    #cm.connect(TcpSettings("127.0.0.1", 3000))
 
     oxidizer_heater_open_frame = Frame(ids.BoardID.ROCKET, 
                            ids.PriorityID.LOW, 
@@ -93,8 +95,8 @@ if __name__ == "__main__":
                            ids.OperationID.SERVO.value.POSITION,
                            (0,) # 0 is for open position, 100 is for closed
                            )
-    cm.push(oxidizer_intake_open_frame)
-    cm.send()
+    #cm.push(oxidizer_intake_open_frame)
+    #cm.send()
     
     oxidizer_intake_close_frame = oxidizer_intake_open_frame.reverse_servos_relays_status()
 
@@ -156,11 +158,22 @@ if __name__ == "__main__":
                            ids.OperationID.RELAY.value.OPEN,
                            ())
     parachute_close_frame = parachute_open_frame.reverse_servos_relays_status()
-
+    cm = cmd.get_CommunicatianManager()
+    cmd.open_oxidizer_intake()
+    cmd.register_oxidizer_level()
+    flag = cmd.wait_till_oxidizer_level(100)
+    if flag:
+        cmd.close_oxidizer_intake()
+        cmd.unregister_oxidizer_intake()
+        cmd.open_fuel_intake()
+    else:
+        print("BŁĄD - za dużo czasu z oxidizer level")
     while True:
         try:
             frame = cm.receive() # We can handle frames using callbacks or by getting frame right from receive() call
             frame_dict = frame.as_dict()
+
+            
 
             # wyłączenie podgrzewania i start rakiety
             if frame_dict["device_id"] == 3 and frame_dict["payload"][0] > 60.0 and max_altitude == 0.0:
@@ -182,8 +195,11 @@ if __name__ == "__main__":
                 cm.send()
 
 
+
+
+
             # wyłączenie utleniacza i włączenie dopływu paliwa
-            if frame_dict["device_id"] == 1 and  frame_dict["payload"][0] == 100:
+            if frame_dict["device_id"] == 1 and frame_dict["payload"][0] == 100:
                 cm.unregister_callback(oxidizer_level_frame)
                 print("Oxidizer level is 100")
                 cm.push(oxidizer_intake_close_frame)
@@ -233,6 +249,13 @@ if __name__ == "__main__":
 
             # włączenie podgrzewania 
             if frame_dict["device_id"] == 3 and frame_dict["payload"][0] <= 55.0 and heater_open == False:
+                # cm.push(igniter_close_frame)
+                # cm.send()
+                # cm.push(fuel_main_close_frame)
+                # cm.send()
+                # cm.push(oxidizer_main_close_frame)
+                # cm.send()
+
                 cm.push(oxidizer_heater_open_frame)
                 cm.send()
                 heater_open = True
