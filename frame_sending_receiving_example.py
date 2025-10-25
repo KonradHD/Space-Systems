@@ -76,8 +76,7 @@ if __name__ == "__main__":
                            0, # oxidizer heater
                            ids.DataTypeID.FLOAT,
                            ids.OperationID.RELAY.value.OPEN,
-                           ()
-                           )
+                           ())
     
     #cm.push(oxidizer_heater_open_frame) # We need to push the frame onto the send queue
     #cm.send() # Send queue first in the send queue

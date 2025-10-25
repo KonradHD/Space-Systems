@@ -15,6 +15,7 @@ from communication_library.tcp_transport import TcpSettings
 from argparse import ArgumentParser
 
 import logging
+# from app import socketio
 
 
 class SimulationState(Enum):
@@ -41,7 +42,8 @@ class StandaloneMock:
                  feed_send_interval: float,
                  no_print: bool,
                  verbose: bool,
-                 time_multiplier: float):
+                 time_multiplier: float,
+                 data_ready: bool):
         
         with open(hardware_config, 'r') as config_file:
             self.config = yaml.safe_load(config_file)
@@ -59,6 +61,30 @@ class StandaloneMock:
         self.last_physics_update = time.perf_counter()
         self.last_status_print = time.perf_counter()
         self.should_run = True
+        # self.socketio = socketio
+        self.data = {
+            "state": "LAUNCH_READY",
+            "sensors": {
+                "fuel_level": 0,
+                "oxidizer_level": 0,
+                "oxidizer_pressure": 0,
+                "altitude": 0,
+                "angle": 0
+            },
+            "servos": {
+                "fuel_intake": 100,
+                "oxidizer_intake": 100,
+                "fuel_main": 100,
+                "oxidizer_main": 100
+            },
+            "relays": {
+                "oxidizer_heater": "CLOSE",
+                "igniter": "CLOSE",
+                "parachute": "CLOSE"
+            },
+            "velocity": 0.0,
+        }
+        self.data_ready = data_ready
         
         self.state = SimulationState.IDLE
         
@@ -104,6 +130,16 @@ class StandaloneMock:
         console_handler.setFormatter(log_formatter)
         logger_main.addHandler(console_handler)
 
+
+    # def _emit_status(self, status):
+    #     self._logger.info("Próba wysłania statusu przez WebSocket")
+    #     try:
+    #         self.socketio.emit("rocket_status", status, to="*")
+    #     except Exception as e:
+    #         self._logger.warning(f"Błąd przy emitowaniu WebSocket: {e}")
+
+
+
     def print_rocket_status(self):
         self._logger.info("=" * 60)
         self._logger.info("ROCKET STATUS:")
@@ -122,6 +158,36 @@ class StandaloneMock:
             self._logger.info(f"    - {relay_name}: {'OPEN' if state else 'CLOSED'}")
         self._logger.info(f"  Velocity: {self.velocity:.2f} m/s")
         self._logger.info("=" * 60)
+
+        self.data = {
+            "rocketstatus" : ("=" * 60),
+            "state" : self.state.value,
+            "sensors" : {
+                "fuel_level" : round(self.sensors['fuel_level'], 1),
+                "oxidizer_level": round(self.sensors["oxidizer_level"], 1),
+                "oxidizer_pressure": round(self.sensors["oxidizer_pressure"], 1),
+                "altitude": round(self.sensors["altitude"], 1),
+                "angle": round(self.sensors["angle"], 1)
+            },
+            "servos" : {
+                name : position  for name, position in self.servos.items()
+            },
+            "relays" : {
+                name : "OPEN" if state else "CLOSED" for name, state in self.relays.items()
+            },
+            "velocity" : round(self.velocity, 2),
+            "=" : "=" * 59
+        }
+        # emituje dane do frontendu przez WebSocket
+
+        # self.socketio.start_background_task(self._emit_status, status)
+        # try:
+        #     from app import socketio
+        #     socketio.emit("rocket_update", self.data)
+        # except Exception as e:
+        #     self._logger.warning(f"SocketIO emit failed: {e}")
+
+
 
     def explode(self, reason: str):
         self.state = SimulationState.EXPLOSION
@@ -583,5 +649,14 @@ if __name__ == "__main__":
                                      cl_args.feed_interval,
                                      cl_args.no_print,
                                      cl_args.verbose,
-                                     cl_args.time_multiplier)
+                                     cl_args.time_multiplier,
+                                     False)
     standalone_mock.receive_send_loop()
+
+# tcp_simulator = Blueprint("tcp_simulator", __name__)
+
+# @tcp_simulator.route("/api/status")
+# def render_status():
+#     #if standalone_mock.data_ready:
+#     #    standalone_mock.data_ready = False
+#     return jsonify(standalone_mock.data)
