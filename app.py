@@ -1,13 +1,18 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, Response
 # from flask_socketio import SocketIO, emit
 from command_runner import Runner
 import subprocess
 from time import sleep
-#from command_runner import command_runner
+import queue
+import json
+from flask_sse import sse
 
 app = Flask(__name__)
 #app.register_blueprint(command_runner)
 # socketio = SocketIO(app, cors_allowed_origins="*")  # pozwala na połączenia z frontendu
+#status_queue = queue.Queue()
+app.config["REDIS_URL"] = "redis://localhost"
+app.register_blueprint(sse, url_prefix="/stream")
 runner = Runner()
 
 
@@ -15,6 +20,7 @@ runner = Runner()
 def home():
     subprocess.Popen(["cmd", "/c", "start", "python", "tcp_proxy.py"])
     print("Uruchomienie proxy.")
+    sleep(2)
     return render_template("index.html")
 
 
@@ -25,9 +31,13 @@ def check():
     print("Uruchomienie symulatora")
     data = request.get_json()
     slots = data.get("slots", [])
-    runner.run_commands(slots)
-    print("Odebrano: ", slots)
+    sleep(2)
+    try:
+        runner.run_commands(slots)
+    except ValueError as e:
+        return jsonify({"status" : "error", "message" : str(e)})
     #proc.terminate()
+    print("Odebrano: ", slots)
     return jsonify({"status" : "ok", "received": slots})
 
 
@@ -66,12 +76,28 @@ def sending_status():
 def get_oxidizer_data():
     if not runner.oxidizer_level:
         return jsonify({"status": "pending"}), 202
-    print("jeeest")
     return jsonify(runner.cmd.oxidizer_level_data)
 
+# @app.route("/api/statement")
+# def get_status():
+#     def event_stream():
+#         while True:
+#             # Czeka na nowy sygnał (blokuje się do momentu, aż coś przyjdzie)
+#             data = status_queue.get()
+#             print(data)
+#             # Wysyłamy dane do klienta (SSE format)
+#             yield f"data: {json.dumps(data)}\n\n"
+#     print("krawuriwaujkwajudawu")
+#     return Response(event_stream(), mimetype="text/event-stream")
+
+
+# Funkcja, którą możesz wywoływać z innych części aplikacji
+# def send_signal(data):
+#     print(data)
+#     status_queue.put(data)  # wrzuca dane do kolejki
 
 if __name__ == "__main__":
     #socketio.run(app, debug=True)
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
 
     

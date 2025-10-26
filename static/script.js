@@ -106,9 +106,44 @@ function enableDropZones(zoneList) {
 enableDropZones(vslots);
 enableDropZones(homeSlots)
 
-// --- SPRAWDZENIE UŁOŻENIA ---
+/* // --- SPRAWDZENIE UŁOŻENIA ---
 document.getElementById('check').addEventListener('click', () => {
     const current = Array.from(vslots).map(vslot => vslot.textContent.trim());
+
+    // wysyłka do backendu
+    fetch('/api/check', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ slots: current })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Odpowiedź z backendu:', data);
+    })
+    .catch(error => {
+        console.error('Błąd przy wysyłaniu:', error);
+    });
+}); */
+
+// --- SPRAWDZENIE UŁOŻENIA ---
+document.getElementById('check').addEventListener('click', () => {
+
+    // Pobieramy tekst + wartość input (jeśli jest)
+    const current = Array.from(vslots).map(vslot => {
+        const btn = vslot.querySelector('.answer');
+        if (!btn) return {
+            name : vslot.textContent.trim(),
+            value : 0
+        };
+        const input = btn.querySelector('input');
+        return {
+            name: vslot.textContent.replace(/[\n\t]/g, "").trim(),
+            value: input ? input.value : null
+        };
+    });
+
     // wysyłka do backendu
     fetch('/api/check', {
         method: 'POST',
@@ -125,6 +160,7 @@ document.getElementById('check').addEventListener('click', () => {
         console.error('Błąd przy wysyłaniu:', error);
     });
 });
+
 
 
 /* fetch("/api/oxidizer_data").then(response => response.json())
@@ -156,4 +192,11 @@ async function pollOxidizerData(url) {
 }
 
 pollOxidizerData("/api/oxidizer_data");
+
+
+const source = new EventSource("/stream");
+source.addEventListener("message", function(event) {
+    const data = JSON.parse(event.data);
+    console.log("Ze streama: ", data.message);
+});
 

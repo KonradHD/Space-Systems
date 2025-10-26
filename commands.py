@@ -5,6 +5,8 @@ from communication_library import ids
 from communication_library.exceptions import TransportTimeoutError, TransportError, UnregisteredCallbackError
 import time
 
+
+
 #frame_dict["device_type"] == 2 SENSOR
 #frame_dict["device_type"] == 1 RELAY
 #frame_dict["device_type"] == 0 SERVO
@@ -21,11 +23,18 @@ class Command():
         }
         self.cm = CommunicationManager()
         self.cm.change_transport_type(TransportType.TCP)
+
+        self.oxidizer_intake_open = False
+        self.fuel_intake_open = False
+        self.oxidizer_heater_open = False
+        self.fuel_main_valve_open = False
+        self.oxidizer_main_valve_open = False
+        self.igniter_open = False
+        self.parachute_open = False
+        
+
+    def connect(self):
         self.cm.connect(TcpSettings("127.0.0.1", 3000)) 
-
-
-    def get_CommunicatianManager(self):
-        return self.cm
 
 
     def get_oxidizer_level_data(self):
@@ -43,6 +52,7 @@ class Command():
                            (0,))
         self.cm.push(frame)
         self.cm.send()
+        
 
 
     def register_oxidizer_level(self):
@@ -62,6 +72,7 @@ class Command():
     
 
     def wait_till_oxidizer_level(self, value) -> bool:
+        print("wait_till_oxidizer_level")
         start_time = time.time()
         timeout = 15
 
@@ -71,7 +82,8 @@ class Command():
                 frame_dict = frame.as_dict()
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1:
                     self.oxidizer_level_data["data"].append(frame_dict["payload"][0])
-                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1 and frame_dict["payload"][0] == value:
+                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1 and frame_dict["payload"][0] >= float(value):
+                    #self.close_oxidizer_intake()
                     self.oxidizer_level_data["time"] = time.time() - start_time
                     return True
             except TransportTimeoutError:
@@ -121,6 +133,7 @@ class Command():
                                    (0,))
         self.cm.push(frame)
         self.cm.send()
+        self.fuel_intake_open = True
     
     def register_fuel_level(self):
         frame = Frame(ids.BoardID.SOFTWARE,
@@ -200,6 +213,7 @@ class Command():
                            ())
         self.cm.push(frame)
         self.cm.send()
+        self.oxidizer_heater_open = True
 
 
     def wait_till_oxidizer_pressure(self, value) -> bool:
