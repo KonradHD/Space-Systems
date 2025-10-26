@@ -482,7 +482,7 @@ class Command():
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height > max_height:
                     max_height = frame_dict["payload"][0]
 
-                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height < max_height and current_height == 0:
+                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height < max_height and current_height <= 10:
                     return True
                 print(max_height, current_height)
             except TransportTimeoutError:

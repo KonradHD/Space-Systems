@@ -54,7 +54,7 @@ h1 {
 
 .rules p {
     font-size: 1.2rem;
-    max-width: 400px;
+    max-width: 100%;
 }
 
 .big-rocket {
@@ -155,8 +155,7 @@ h1 {
     background: rgba(0, 255, 150, 0.2);
 }
 
-.check-btn {
-    background: linear-gradient(to right, #00ff99, #007744);
+.btn {
     border: none;
     padding: 15px 30px;
     border-radius: 10px;
@@ -167,10 +166,34 @@ h1 {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.check-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00ff99;
+.hint-btn {
+    background: linear-gradient(to right, rgb(62, 249, 255), rgb(62, 168, 255));
 }
+
+.reset-btn {
+    background: linear-gradient(to right, rgb(250, 78, 78), rgb(255, 40, 40));
+}
+
+.check-btn { 
+    background: linear-gradient(to right, #00fc97, #007744);
+}
+
+.check-btn:hover, .hint-btn:hover, .reset-btn:hover {
+    transform: scale(1.05);
+}
+
+.hint-btn:hover {
+    box-shadow: 0 0 15px rgb(62, 249, 255);
+}
+
+.reset-btn:hover {
+    box-shadow: 0 0 15px rgb(250, 78, 78);
+}
+
+.check-btn:hover {
+    box-shadow: 0 0 15px #00fc97;
+}
+ 
 
 
 #rocket-progress {
@@ -298,4 +321,76 @@ h1 {
 
 #rocket-progress>p {
     font-size: 1.2em;
+}
+
+
+.pop-up {
+    position: fixed;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%) translateY(-20px);
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 5rem;
+    font-weight: bold;
+    color: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: all 0.6s ease;
+}
+
+/* Dla różnych stanów */
+.pop-up.landed {
+    background: linear-gradient(135deg, #00b300, #00ff66);
+    box-shadow: 0 0 15px rgba(0, 255, 100, 0.5);
+}
+
+.pop-up.exploded {
+    background: linear-gradient(135deg, #cc0000, #ff4444);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+}
+
+/* Klasa aktywująca animację */
+.pop-up.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+}
+
+/* Klasa kończąca – zsunięcie w dół */
+.pop-up.hide {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(100px);
+}
+
+.hints-container {
+    display: flex;
+    justify-content:space-around; /* prawo kontenera */
+    align-items: flex-start;
+    margin: 20px;
+}
+
+.hints {
+    width: 200px; /* stałe pole po prawej stronie */
+    min-height: 40px; /* wysokość miejsca na hint */
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 0.95rem;
+}
+
+/* Ukrywanie hintów, będą zastępowane w tym samym miejscu */
+.hints p {
+    display: none;
+    position: absolute; /* wszystkie w tym samym miejscu */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 5px;
 }

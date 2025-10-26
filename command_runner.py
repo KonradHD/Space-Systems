@@ -17,7 +17,7 @@ class Runner():
     def run_commands(self, slots):
         self.cmd.connect()
         for slot in slots:
-            if len(slot["name"].split(" ")) < 5 and slot["name"] != "":
+            if slot["type"] == "void non parametric":
                 fun = slot["name"].lower().replace(" ", "_")
                 getattr(self.cmd, fun)()
             else:
@@ -49,6 +49,8 @@ class Runner():
                     if not self.fall_meters:
                         print("Timeout")
                         break
+                if slot["name"].startswith("Sleep for"):
+                    sleep(float(slot["value"]))
                 if slot["name"] == "Wait till rocket will land":
                     self.landed = self.cmd.wait_till_rocket_land()
                     if not self.landed:

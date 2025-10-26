@@ -15,9 +15,12 @@
     <main>
         <h1>Rocket Game</h1>
         <section class="rules">
-            <h3>Zasady gry</h3>
+            <h2>Zasady gry</h2>
             <div>
-                <p>Ułóż puzle w dobrej kolejności, tak żeby rakieta bezpiecznie wystartowała</p>
+                <p>Ułóż puzle w odpowiedniej kolejności, tak żeby rakieta 
+                    bezpiecznie wystartowała, a później wylądowała. Jeżeli to 
+                    zadanie okazałoby się dla ciebie za trudne, skorzystaj z 
+                    dostępnych podpowiedzi.</p>
                 <img class="big-rocket" src="../static/images/rocket.png" alt="Big rocket photo">
             </div>
         </section>
@@ -26,64 +29,69 @@
             <h2>Twoje zadanie</h2>
 
             <div class="buttons-container">
-                <div class="slot"><button class="b1 answer" draggable="true">Open oxidizer intake</button></div>
-                <div class="slot"><button class="b2 answer" draggable="true">Register oxidizer level</button></div>
+                <div class="slot"><button class="b1 answer" draggable="true" data-type="void non parametric">Open oxidizer intake</button></div>
+                <div class="slot"><button class="b2 answer" draggable="true" data-type="void non parametric">Register oxidizer level</button></div>
                 <div class="slot">
-                    <button class="b3 answer" draggable="true">
+                    <button class="b3 answer" draggable="true" data-type="bool parametric">
                         Wait till oxidizer level will be
                         <input type="number" id="numOxLevel" min="0" max="100">
                         %
                     </button>
                 </div>
-                <div class="slot"><button class="b4 answer" draggable="true">Close oxidizer intake</button></div>
-                <div class="slot"><button class="b5 answer" draggable="true">Unregister oxidizer level</button></div>
-                <div class="slot"><button class="b6 answer" draggable="true">Open fuel intake</button></div>
-                <div class="slot"><button class="b7 answer" draggable="true">Register fuel level</button></div>
+                <div class="slot"><button class="b4 answer" draggable="true" data-type="void non parametric">Close oxidizer intake</button></div>
+                <div class="slot"><button class="b5 answer" draggable="true" data-type="void non parametric">Unregister oxidizer level</button></div>
+                <div class="slot"><button class="b6 answer" draggable="true" data-type="void non parametric">Open fuel intake</button></div>
+                <div class="slot"><button class="b7 answer" draggable="true" data-type="void non parametric">Register fuel level</button></div>
                 <div class="slot">
-                    <button class="b8 answer" draggable="true">
+                    <button class="b8 answer" draggable="true" data-type="bool parametric">
                         Wait till fuel level will be
                         <input type="number" id="numFuelLevel" min="0" max="100">
                         %
                     </button>
                 </div>
-                <div class="slot"><button class="b9 answer" draggable="true">Close fuel intake</button></div>
-
-                <div class="slot"><button class="b10 answer" draggable="true">Unregister fuel level</button></div>
-                <div class="slot"><button class="b11 answer" draggable="true">Register oxidizer pressure</button></div>
-                <div class="slot"><button class="b12 answer" draggable="true">Open oxidizer heater</button></div>
+                <div class="slot"><button class="b9 answer" draggable="true" data-type="void non parametric">Close fuel intake</button></div>
+                <div class="slot"><button class="b10 answer" draggable="true" data-type="void non parametric">Unregister fuel level</button></div>
+                <div class="slot"><button class="b11 answer" draggable="true" data-type="void non parametric">Register oxidizer pressure</button></div>
+                <div class="slot"><button class="b12 answer" draggable="true" data-type="void non parametric">Open oxidizer heater</button></div>
                 <div class="slot">
-                    <button class="b13 answer" draggable="true">
+                    <button class="b13 answer" draggable="true" data-type="bool parametric">
                         Wait till the oxidizer pressure will be
-                        <input type="number" id="numBars" min="0" max="90">
+                        <input type="number" id="numBars" min="0" max="100">
                         bars
                     </button>
                 </div>
-                <div class="slot"><button class="b14 answer" draggable="true">Close oxidizer heater</button></div>
-                <div class="slot"><button class="b15 answer" draggable="true">Unregister oxidizer pressure</button>
+                <div class="slot"><button class="b14 answer" draggable="true" data-type="void non parametric">Close oxidizer heater</button></div>
+                <div class="slot"><button class="b15 answer" draggable="true" data-type="void non parametric">Unregister oxidizer pressure</button>
                 </div>
-                <div class="slot"><button class="b16 answer" draggable="true">Open fuel main valve</button></div>
-                <div class="slot"><button class="b17 answer" draggable="true">Open oxidizer main valve</button></div>
-                <div class="slot"><button class="b18 answer" draggable="true">Open igniter</button></div>
-                <div class="slot"><button class="b19 answer" draggable="true">Wait till the rocket will reach
-                        apogeum</button></div>
+                <div class="slot"><button class="b16 answer" draggable="true" data-type="void non parametric">Open fuel main valve</button></div>
+                <div class="slot"><button class="b17 answer" draggable="true" data-type="void non parametric">Open oxidizer main valve</button></div>
+                <div class="slot"><button class="b18 answer" draggable="true" data-type="void non parametric">Open igniter</button></div>
+                <div class="slot"><button class="b19 answer" draggable="true" data-type="bool non parametric">Wait till the rocket will reach apogeum</button></div>
                 <div class="slot">
-                    <button class="b20 answer" draggable="true">
+                    <button class="b20 answer" draggable="true" data-type="bool parametric">
                         Wait till the rocket will fall
                         <input type="number" id="fallMeters" min="0">
                         meters
                     </button>
                 </div>
 
-                <div class="slot"><button class="b21 answer" draggable="true">Close igniter</button></div>
-                <div class="slot"><button class="b22 answer" draggable="true">Close oxidizer main valve</button></div>
-                <div class="slot"><button class="b23 answer" draggable="true">Close fuel main valve</button></div>
-                <div class="slot"><button class="b24 answer" draggable="true">Register angle</button></div>
-                <div class="slot"><button class="b25 answer" draggable="true">Register altitude</button></div>
-                <div class="slot"><button class="b26 answer" draggable="true">Open parachute</button></div>
-                <div class="slot"><button class="b27 answer" draggable="true">Close parachute</button></div>
-                <div class="slot"><button class="b28 answer" draggable="true">Unregister angle</button></div>
-                <div class="slot"><button class="b29 answer" draggable="true">Unregister altitude</button></div>
-                <div class="slot"><button class="b30 answer" draggable="true">Wait till rocket will land</button></div>
+                <div class="slot"><button class="b21 answer" draggable="true" data-type="void non parametric">Close igniter</button></div>
+                <div class="slot"><button class="b22 answer" draggable="true" data-type="void non parametric">Close oxidizer main valve</button></div>
+                <div class="slot"><button class="b23 answer" draggable="true" data-type="void non parametric">Close fuel main valve</button></div>
+                <div class="slot"><button class="b24 answer" draggable="true" data-type="void non parametric">Register angle</button></div>
+                <div class="slot"><button class="b25 answer" draggable="true" data-type="void non parametric">Register altitude</button></div>
+                <div class="slot"><button class="b26 answer" draggable="true" data-type="void non parametric">Open parachute</button></div>
+                <div class="slot"><button class="b27 answer" draggable="true" data-type="void non parametric">Close parachute</button></div>
+                <div class="slot"><button class="b28 answer" draggable="true" data-type="void non parametric">Unregister angle</button></div>
+                <div class="slot"><button class="b29 answer" draggable="true" data-type="void non parametric">Unregister altitude</button></div>
+                <div class="slot"><button class="b30 answer" draggable="true" data-type="bool non parametric">Wait till rocket will land</button></div>
+                <div class="slot">
+                    <button class="b31 answer" draggable="true" data-type="void parametric">
+                        Sleep for 
+                        <input type="number" id="sleeping" min="0">
+                        seconds
+                    </button>
+                </div>
             </div>
             <h3>Ułóż kolejność:</h3>
             <div class="slots-container">
@@ -121,7 +129,17 @@
                 <div class="valid-slot" data-slot="30"></div>
             </div>
         </section>
-        <button id="check" class="check-btn">Sprawdź ułożenie</button>
+        <div class="hints-container buttons">
+            <div class="hints">
+                <p>Hint1</p>
+                <p>Hint2</p>
+                <p>Hint3</p>
+                <p>Hint4</p>
+                <button id="hint" class="hint-btn btn">Get hint</button>
+            </div>
+            <button id="check" class="check-btn btn">Sprawdź ułożenie</button>
+            <button id="reset" class="reset-btn btn">Reset puzzles</button>
+        </div>
 
         <div id="rocket-progress">
             <pre>============================================================</pre>
@@ -152,6 +170,8 @@
 
         </div>
     </main>
+    <div class="pop-up landed">Rocket landed</div>
+    <div class="pop-up exploded">Rocket exploded</div>
 </body>
 
 </html>
