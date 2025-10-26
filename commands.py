@@ -6,7 +6,6 @@ from communication_library.exceptions import TransportTimeoutError, TransportErr
 import time
 
 
-
 #frame_dict["device_type"] == 2 SENSOR
 #frame_dict["device_type"] == 1 RELAY
 #frame_dict["device_type"] == 0 SERVO
@@ -23,14 +22,6 @@ class Command():
         }
         self.cm = CommunicationManager()
         self.cm.change_transport_type(TransportType.TCP)
-
-        self.oxidizer_intake_open = False
-        self.fuel_intake_open = False
-        self.oxidizer_heater_open = False
-        self.fuel_main_valve_open = False
-        self.oxidizer_main_valve_open = False
-        self.igniter_open = False
-        self.parachute_open = False
         
 
     def connect(self):
@@ -92,7 +83,7 @@ class Command():
                 continue
             except Exception as e:
                 print(f"Time waiting error: {e}")
-                continue 
+                continue
         return False
     
 
@@ -163,7 +154,7 @@ class Command():
                 continue
             except Exception as e:
                 print(f"Time waiting error: {e}")
-                continue 
+                continue
         return False
     
     def close_fuel_intake(self):
@@ -234,10 +225,11 @@ class Command():
                 continue
             except Exception as e:
                 print(f"Time waiting error: {e}")
-                continue 
+                continue
         return False
     
     def close_oxidizer_heater(self):
+        print("close_oxidizer_heater")
         frame = frame = Frame(ids.BoardID.ROCKET, 
                            ids.PriorityID.LOW, 
                            ids.ActionID.SERVICE, 
@@ -252,6 +244,7 @@ class Command():
 
 
     def unregister_oxidizer_pressure(self):
+        print("unregister_oxidizer_pressure")
         frame = Frame(ids.BoardID.SOFTWARE,
                                     ids.PriorityID.LOW,
                                     ids.ActionID.FEED,
@@ -263,6 +256,7 @@ class Command():
         self.cm.unregister_callback(frame)
 
     def open_fuel_main_valve(self): 
+        print("open_fuel_main_valve")
         frame = Frame(ids.BoardID.ROCKET, 
                            ids.PriorityID.LOW, 
                            ids.ActionID.SERVICE, 
@@ -276,6 +270,7 @@ class Command():
         self.cm.send()
 
     def open_oxidizer_main_valve(self): 
+        print("open_oxidizer_main_valve")
         frame = Frame(ids.BoardID.ROCKET, 
                            ids.PriorityID.LOW, 
                            ids.ActionID.SERVICE, 
@@ -290,6 +285,7 @@ class Command():
 
 
     def open_igniter(self):
+        print("open_igniter")
         frame = Frame(ids.BoardID.ROCKET, 
                            ids.PriorityID.LOW, 
                            ids.ActionID.SERVICE, 
@@ -323,13 +319,14 @@ class Command():
                 continue
             except Exception as e:
                 print(f"Time waiting error: {e}")
-                continue 
+                continue
         return False
     
 
     def wait_till_rocket_fall(self, fall_distance) -> bool:
         start_time = time.time()
         timeout = 30
+        max_height = 0
 
         while time.time() - start_time <= timeout:
             try:
@@ -348,7 +345,7 @@ class Command():
                 continue
             except Exception as e:
                 print(f"Time waiting error: {e}")
-                continue 
+                continue
         return False
     
 
@@ -491,7 +488,7 @@ class Command():
                 continue
             except Exception as e:
                 print(f"Time waiting error: {e}")
-                continue 
+                continue
         return False
 
 

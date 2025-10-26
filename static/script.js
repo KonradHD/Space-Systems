@@ -89,21 +89,45 @@ function initSSE() {
         }
 
         source.close();
-        console.warn("Połączenie SSE zostało zamknięte po błędzie.");
+        console.warn("Połączenie SSE zostało zamknięte po ostrzeżeniu.");
     });
 
-    source.addEventListener("success", function(event) {
+    source.addEventListener("success", function (event) {
         const data = JSON.parse(event.data);
         console.log("success");
         const popup = document.querySelector(".landed");
         showPopup(popup);
+        try {
+            const container = document.querySelector('#rocket-progress');
+
+            container.innerHTML = `
+                <h6>${data.status}</h6>
+                <p>Message: ${data.message}</p>
+                `;
+        } catch (e) {
+            console.error("Error:", e);
+        }
+        source.close();
+        console.warn("Połączenie SSE zostało zamknięte po lądowaniu.");
     });
 
-    source.addEventListener("fail", function(event) {
+    source.addEventListener("fail", function (event) {
         const data = JSON.parse(event.data);
         console.log("fail");
         const popup = document.querySelector(".exploded");
         showPopup(popup);
+        try {
+            const container = document.querySelector('#rocket-progress');
+
+            container.innerHTML = `
+                <h3>${data.status}</h3>
+                <p>Message: ${data.message}</p>
+                `;
+        } catch (e) {
+            console.error("Error:", e);
+        }
+        source.close();
+        console.warn("Połączenie SSE zostało zamknięte po eksplozji.");
     });
 }
 
@@ -228,7 +252,7 @@ document.getElementById('check').addEventListener('click', () => {
     // Pobieramy tekst + wartość input (jeśli jest)
     const current = Array.from(vslots).map(vslot => {
         const btn = vslot.querySelector('.answer');
-        
+
         if (!btn) return {
             name: vslot.textContent.trim(),
             value: 0,
@@ -237,7 +261,7 @@ document.getElementById('check').addEventListener('click', () => {
         const type = btn.dataset.type;
         const input = btn.querySelector('input');
         return {
-            name: vslot.textContent.replace(/[\n\t]/g, "").trim(),
+            name: vslot.textContent.replace(/[\n\t]/g, "").replace(/\s+/g, " ").trim(),
             value: input ? input.value : null,
             type: type
         };

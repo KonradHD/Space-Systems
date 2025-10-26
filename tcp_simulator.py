@@ -149,6 +149,8 @@ class StandaloneMock:
             sse.publish(self.data, type="message")
 
     def explode(self, reason: str):
+        with app.app_context():
+            sse.publish({"status" : "EXPLOSION", "message" : f"The rocket exploded: {reason}"}, type="fail")
         self.state = SimulationState.EXPLOSION
         self._logger.error(f'EXPLOSION: {reason}')
         self.print_rocket_status()
@@ -480,6 +482,8 @@ class StandaloneMock:
                 self.velocity = 0.0
                 self.state = SimulationState.LANDED
                 self._logger.info(f'State: {self.state.value} - Successful landing!')
+                with app.app_context():
+                    sse.publish({"status" : "LANDING", "message" : "Successful landing!"}, type="success")
                 self.print_rocket_status()
                 time.sleep(2)
                 self.should_run = False

@@ -26,20 +26,25 @@ def home():
 @app.route("/api/check", methods=["POST"])
 def check():
     runner.reset()
+    sleep(2)
     #subprocess.Popen(["python3", "tcp_simulator.py"])
     proc = subprocess.Popen(["python3", "tcp_simulator.py"])
     print("Uruchomienie symulatora")
     data = request.get_json()
     slots = data.get("slots", [])
     sleep(2)
+    print("Odebrano: ", slots)
     try:
-        runner.run_commands(slots)
+        statement = runner.run_commands(slots)
+        if statement == "Timeout":
+            sse.publish({"status" : "Timeout", "message" : "Check, if you registered data or opened appropriate waiting block."}, type="error")
     except ValueError as e:
         sse.publish({"status" : "error", "message" : str(e)}, type="error")
         proc.terminate()
         return jsonify({"status" : "error", "message" : str(e)})
-    proc.terminate()
-    print("Odebrano: ", slots)
+    sleep(2)
+    #proc.terminate()
+    
     return jsonify({"status" : "ok", "received": slots})
 
 

@@ -166,7 +166,7 @@ h1 {
     border: none;
     padding: 20px 10px;
     border-radius: 10px;
-    width:220px;
+    width: 220px;
     color: white;
     font-size: 1.2rem;
     margin-top: 40px;
@@ -183,11 +183,13 @@ h1 {
     background: linear-gradient(to right, rgb(250, 78, 78), rgb(255, 40, 40));
 }
 
-.check-btn { 
+.check-btn {
     background: linear-gradient(to right, #00fc97, #007744);
 }
 
-.check-btn:hover, .hint-btn:hover, .reset-btn:hover {
+.check-btn:hover,
+.hint-btn:hover,
+.reset-btn:hover {
     transform: scale(1.05);
 }
 
@@ -202,7 +204,7 @@ h1 {
 .check-btn:hover {
     box-shadow: 0 0 15px #00fc97;
 }
- 
+
 
 
 #rocket-progress {
@@ -210,7 +212,7 @@ h1 {
     margin: 40px auto;
     padding: 20px 25px;
     width: 50%;
-    max-height: 550px;
+    max-height: 630px;
     overflow-y: auto;
 
     background: rgba(20, 20, 30, 0.85);
@@ -328,6 +330,25 @@ h1 {
     text-transform: uppercase;
 }
 
+#rocket-progress h6 {
+    color: #4cff58;
+    /* intensywny czerwony kolor */
+    font-weight: 700;
+    font-size: 1.8rem;
+    background-color: rgba(76, 255, 106, 0.37);
+    /* delikatne czerwone tło */
+    border: 2px solid #4cff6d;
+    border-left: 6px solid #1eff31;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    box-shadow: 0 0 8px rgba(76, 255, 148, 0.387);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
 #rocket-progress>p {
     font-size: 1.2em;
 }
@@ -373,21 +394,28 @@ h1 {
 }
 
 .menu {
+    width: 70%;
+    margin: 0 auto;
     display: flex;
-    justify-content:space-around;
+    justify-content: space-evenly;
     align-items: center;
     margin: 20px;
+    /* gap: 150px; */
+    justify-self: center;
+
 }
 
 .hints-container {
-    width: fit-content; /* stałe pole po prawej stronie */
-    min-height: 40px; /* wysokość miejsca na hint */
+    width: fit-content;
+    /* stałe pole po prawej stronie */
+    min-height: 40px;
+    /* wysokość miejsca na hint */
     height: 200px;
     padding: 20px;
     padding-top: 40px;
     border-radius: 8px;
     display: flex;
-    align-items:end;
+    align-items: end;
     justify-content: center;
     position: relative;
     font-size: 0.9rem;
@@ -404,13 +432,15 @@ h1 {
     font-family: 'Courier New', monospace;
     line-height: 1.6;
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
-    overflow: hidden; /* <--- nic nie wychodzi poza kontener */
+    overflow: hidden;
+    /* <--- nic nie wychodzi poza kontener */
 }
 
 /* Ukrywanie hintów, będą zastępowane w tym samym miejscu */
 .hints-container p {
     display: none;
-    position: absolute; /* wszystkie w tym samym miejscu */
+    position: absolute;
+    /* wszystkie w tym samym miejscu */
     top: 45px;
     left: 50%;
     width: 90%;
