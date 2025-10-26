@@ -129,7 +129,7 @@ const vslots = document.querySelectorAll('.valid-slot');
 const homeSlots = document.querySelectorAll(".slot")
 let dragged = null;
 let ghost = null;
-const hints = document.querySelectorAll('.hints p');
+const hints = document.querySelectorAll('.hints-container p');
 const hintBtn = document.getElementById('hint');
 let hintIndex = 0;
 

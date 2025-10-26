@@ -155,15 +155,24 @@ h1 {
     background: rgba(0, 255, 150, 0.2);
 }
 
+/* .menu {
+    display: flex;
+    position: relative;
+    justify-content: space-around;
+} */
+
 .btn {
+    /* position: absolute; */
     border: none;
-    padding: 15px 30px;
+    padding: 20px 10px;
     border-radius: 10px;
+    width:220px;
     color: white;
     font-size: 1.2rem;
     margin-top: 40px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
+    bottom: 10%;
 }
 
 .hint-btn {
@@ -363,34 +372,62 @@ h1 {
     transform: translate(-50%, -50%) translateY(100px);
 }
 
-.hints-container {
+.menu {
     display: flex;
-    justify-content:space-around; /* prawo kontenera */
-    align-items: flex-start;
+    justify-content:space-around;
+    align-items: center;
     margin: 20px;
 }
 
-.hints {
-    width: 200px; /* stałe pole po prawej stronie */
+.hints-container {
+    width: fit-content; /* stałe pole po prawej stronie */
     min-height: 40px; /* wysokość miejsca na hint */
-    padding: 10px;
+    height: 200px;
+    padding: 20px;
+    padding-top: 40px;
     border-radius: 8px;
     display: flex;
-    align-items: center;
+    align-items:end;
     justify-content: center;
     position: relative;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+
+
+    /* overflow-y: auto; */
+
+    background: rgba(20, 20, 30, 0.85);
+    border: 2px solid rgba(0, 255, 170, 0.4);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 170, 0.25);
+
+    color: #e0f7ff;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+    overflow: hidden; /* <--- nic nie wychodzi poza kontener */
 }
 
 /* Ukrywanie hintów, będą zastępowane w tym samym miejscu */
-.hints p {
+.hints-container p {
     display: none;
     position: absolute; /* wszystkie w tym samym miejscu */
-    top: 50%;
+    top: 45px;
     left: 50%;
+    width: 90%;
     transform: translate(-50%, -50%);
     margin: 0;
     padding: 5px 10px;
     color: white;
     border-radius: 5px;
+    text-align: left;
+}
+
+#hint {
+    margin-bottom: 25px;
+}
+
+/* Efekt pojawienia się */
+.hints-container p.show {
+    display: block;
+    animation: fadeIn 0.9s ease;
 }
