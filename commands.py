@@ -74,7 +74,7 @@ class Command():
     def wait_till_oxidizer_level(self, value) -> bool:
         print("wait_till_oxidizer_level")
         start_time = time.time()
-        timeout = 15
+        timeout = 20
 
         while time.time() - start_time <= timeout:
             try:
@@ -83,7 +83,7 @@ class Command():
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1:
                     self.oxidizer_level_data["data"].append(frame_dict["payload"][0])
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1 and frame_dict["payload"][0] >= float(value):
-                    #self.close_oxidizer_intake()
+                    self.close_oxidizer_intake()
                     self.oxidizer_level_data["time"] = time.time() - start_time
                     return True
             except TransportTimeoutError:
@@ -148,13 +148,14 @@ class Command():
 
     def wait_till_fuel_level(self, value) -> bool:
         start_time = time.time()
-        timeout = 15
+        timeout = 20
 
         while time.time() - start_time <= timeout:
             try:
                 frame = self.cm.receive()
                 frame_dict = frame.as_dict()
-                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 0 and frame_dict["payload"][0] == value:
+                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 0 and frame_dict["payload"][0] >= float(value):
+                    self.close_fuel_intake()
                     return True
             except TransportTimeoutError:
                 pass
@@ -224,7 +225,8 @@ class Command():
             try:
                 frame = self.cm.receive()
                 frame_dict = frame.as_dict()
-                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 3 and frame_dict["payload"][0] >= value:
+                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 3 and frame_dict["payload"][0] >= float(value):
+                    self.close_oxidizer_heater()
                     return True
             except TransportTimeoutError:
                 pass
@@ -338,7 +340,7 @@ class Command():
                     max_height = frame_dict["payload"][0]
 
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height < max_height:
-                    if current_height <= max_height - fall_distance:
+                    if current_height <= max_height - float(fall_distance):
                         return True
             except TransportTimeoutError:
                 pass
@@ -491,3 +493,11 @@ class Command():
                 print(f"Time waiting error: {e}")
                 continue 
         return False
+
+
+    def reset(self):
+        self.unregister_altitude()
+        self.unregister_angle()
+        self.unregister_fuel_level()
+        self.unregister_oxidizer_level()
+        self.unregister_oxidizer_pressure()

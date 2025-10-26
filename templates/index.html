@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,9 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="../static/script.js" defer></script>
 </head>
+
 <body>
-    <img class="background" src="../static/images/cosmos.jpg" alt="background"> 
+    <img class="background" src="../static/images/cosmos.jpg" alt="background">
     <main>
         <h1>Rocket Game</h1>
         <section class="rules">
@@ -28,7 +30,7 @@
                 <div class="slot"><button class="b2 answer" draggable="true">Register oxidizer level</button></div>
                 <div class="slot">
                     <button class="b3 answer" draggable="true">
-                        Wait till oxidizer level will be 
+                        Wait till oxidizer level will be
                         <input type="number" id="numOxLevel" min="0" max="100">
                         %
                     </button>
@@ -39,7 +41,7 @@
                 <div class="slot"><button class="b7 answer" draggable="true">Register fuel level</button></div>
                 <div class="slot">
                     <button class="b8 answer" draggable="true">
-                        Wait till fuel level will be  
+                        Wait till fuel level will be
                         <input type="number" id="numFuelLevel" min="0" max="100">
                         %
                     </button>
@@ -51,20 +53,22 @@
                 <div class="slot"><button class="b12 answer" draggable="true">Open oxidizer heater</button></div>
                 <div class="slot">
                     <button class="b13 answer" draggable="true">
-                        Wait till the oxidizer pressure will be 
+                        Wait till the oxidizer pressure will be
                         <input type="number" id="numBars" min="0" max="90">
                         bars
                     </button>
                 </div>
                 <div class="slot"><button class="b14 answer" draggable="true">Close oxidizer heater</button></div>
-                <div class="slot"><button class="b15 answer" draggable="true">Unregister oxidizer pressure</button></div>
+                <div class="slot"><button class="b15 answer" draggable="true">Unregister oxidizer pressure</button>
+                </div>
                 <div class="slot"><button class="b16 answer" draggable="true">Open fuel main valve</button></div>
                 <div class="slot"><button class="b17 answer" draggable="true">Open oxidizer main valve</button></div>
                 <div class="slot"><button class="b18 answer" draggable="true">Open igniter</button></div>
-                <div class="slot"><button class="b19 answer" draggable="true">Wait till the rocket will reach apogeum</button></div>
+                <div class="slot"><button class="b19 answer" draggable="true">Wait till the rocket will reach
+                        apogeum</button></div>
                 <div class="slot">
                     <button class="b20 answer" draggable="true">
-                        Wait till the rocket will fall 
+                        Wait till the rocket will fall
                         <input type="number" id="fallMeters" min="0">
                         meters
                     </button>
@@ -81,7 +85,7 @@
                 <div class="slot"><button class="b29 answer" draggable="true">Unregister altitude</button></div>
                 <div class="slot"><button class="b30 answer" draggable="true">Wait till rocket will land</button></div>
             </div>
-        <h3>Ułóż kolejność:</h3>
+            <h3>Ułóż kolejność:</h3>
             <div class="slots-container">
                 <div class="valid-slot" data-slot="1"></div>
                 <div class="valid-slot" data-slot="2"></div>
@@ -119,7 +123,35 @@
         </section>
         <button id="check" class="check-btn">Sprawdź ułożenie</button>
 
-        <div id="rocket-progress"></div>
+        <div id="rocket-progress">
+            <pre>============================================================</pre>
+            <h1>State: Waiting...</h1>
+            <h4>Sensors:</h4>
+            <ul>
+                <li>Fuel Level: 0.0%</li>
+                <li>Oxidizer Level: 0.0%</li>
+                <li>Oxidizer Pressure: 0.0 bar</li>
+                <li>Altitude: 0.0 m</li>
+                <li>Angle: 2.0°</li>
+            </ul>
+            <h4>Servos:</h4>
+            <ul>
+                <li>fuel_intake: 100</li>
+                <li>oxidizer_intake: 100</li>
+                <li>fuel_main: 100</li>
+                <li>oxidizer_main: 100</li>
+            </ul>
+            <h4>Relays:</h4>
+            <ul>
+                <li>oxidizer_heater: CLOSED</li>
+                <li>igniter: CLOSED</li>
+                <li>parachute: CLOSED</li>
+            </ul>
+            <h4>Velocity: 0.00 m/s</h4>
+            <pre>============================================================</pre>
+
+        </div>
     </main>
 </body>
+
 </html>

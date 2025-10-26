@@ -15,7 +15,7 @@ from communication_library.tcp_transport import TcpSettings
 from argparse import ArgumentParser
 
 import logging
-from app import sse
+from app import sse, app
 
 
 class SimulationState(Enum):
@@ -60,6 +60,7 @@ class StandaloneMock:
         self.last_physics_update = time.perf_counter()
         self.last_status_print = time.perf_counter()
         self.should_run = True
+        self.data = {}
         
         self.state = SimulationState.IDLE
         
@@ -124,7 +125,28 @@ class StandaloneMock:
         self._logger.info(f"  Velocity: {self.velocity:.2f} m/s")
         self._logger.info("=" * 60)
 
-        sse.publish({"command" : "open_oxidizer_intake", "time" : time.time()}, type="message")
+        self.data = {
+            "rocketstatus" : ("=" * 60),
+            "state" : self.state.value,
+            "sensors" : {
+                "fuel_level" : round(self.sensors['fuel_level'], 1),
+                "oxidizer_level": round(self.sensors["oxidizer_level"], 1),
+                "oxidizer_pressure": round(self.sensors["oxidizer_pressure"], 1),
+                "altitude": round(self.sensors["altitude"], 1),
+                "angle": round(self.sensors["angle"], 1)
+            },
+            "servos" : {
+                name : position  for name, position in self.servos.items()
+            },
+            "relays" : {
+                name : "OPEN" if state else "CLOSED" for name, state in self.relays.items()
+            },
+            "velocity" : round(self.velocity, 2),
+            "=" : "=" * 59
+        }
+
+        with app.app_context():
+            sse.publish(self.data, type="message")
 
     def explode(self, reason: str):
         self.state = SimulationState.EXPLOSION
@@ -169,8 +191,12 @@ class StandaloneMock:
                     handled = True
                 else:
                     self._logger.warning(f'Unknown servo operation {_frame.operation} for {servo_name}')
+                    with app.app_context():
+                        sse.publish({"status" : "warning", "message" : f'Unknown servo operation {_frame.operation} for {servo_name}'}, type="warning")
             else:
                 self._logger.warning(f'Unknown servo device_id {_frame.device_id}')
+                with app.app_context():
+                    sse.publish({"status" : "warning", "message" : f'Unknown servo device_id {_frame.device_id}'}, type="warning")
             
             if handled:
                 replacements = {
@@ -204,8 +230,12 @@ class StandaloneMock:
                     handled = True
                 else:
                     self._logger.warning(f'Unknown relay operation {_frame.operation} for {relay_name}')
+                    with app.app_context():
+                        sse.publish({"status" : "warning", "message" : f'Unknown relay operation {_frame.operation} for {relay_name}'}, type="warning")
             else:
                 self._logger.warning(f'Unknown relay device_id {_frame.device_id}')
+                with app.app_context():
+                    sse.publish({"status" : "warning", "message" : f'Unknown relay device_id {_frame.device_id}'}, type="warning")
             
             if handled:
                 replacements = {
@@ -217,6 +247,8 @@ class StandaloneMock:
         
         else:
             self._logger.warning(f'Unknown device_type {_frame.device_type}')
+            with app.app_context():
+                sse.publish({"status" : "warning", "message" : f'Unknown device_type {_frame.device_type}'}, type="warning")
         
         return output_frames
 
@@ -248,6 +280,9 @@ class StandaloneMock:
             if self.is_servo_open('fuel_intake'):
                 self._logger.warning('PROPELLANT LOADING VIOLATION: Fuel intake opened before oxidizer is filled!')
                 self._logger.warning('Correct procedure: Fill oxidizer tank first, then fuel tank.')
+                message = 'PROPELLANT LOADING VIOLATION: Fuel intake opened before oxidizer is filled! \nCorrect procedure: Fill oxidizer tank first, then fuel tank.'
+                with app.app_context():
+                    sse.publish({"status" : "warning", "message" : message}, type="warning")
             elif self.is_servo_open('oxidizer_intake'):
                 self.state = SimulationState.FILLING_OXIDIZER
                 self._logger.info(f'State: {self.state.value}')
@@ -257,6 +292,9 @@ class StandaloneMock:
             if self.is_servo_open('fuel_intake'):
                 self._logger.warning('PROPELLANT LOADING VIOLATION: Fuel intake opened before oxidizer is fully filled!')
                 self._logger.warning('Correct procedure: Complete oxidizer filling first.')
+                message = 'PROPELLANT LOADING VIOLATION: Fuel intake opened before oxidizer is fully filled! \nCorrect procedure: Complete oxidizer filling first.'
+                with app.app_context():
+                    sse.publish({"status" : "warning", "message" : message}, type="warning")
             
             if self.is_servo_open('oxidizer_intake'):
                 self.sensors['oxidizer_level'] = min(100.0, self.sensors['oxidizer_level'] + dt * 10.0)
@@ -360,6 +398,8 @@ class StandaloneMock:
                         pressure_deviation = min(abs(pressure - 55.0), abs(pressure - 65.0))
                         self.thrust_multiplier = max(0.5, 1.0 - (pressure_deviation / 15.0) * 0.5)
                         self._logger.warning(f"Suboptimal pressure {pressure:.1f} bars - thrust reduced to {self.thrust_multiplier*100:.0f}%")
+                        with app.app_context():
+                            sse.publish({"status" : "warning", "message" : f"Suboptimal pressure {pressure:.1f} bars - thrust reduced to {self.thrust_multiplier*100:.0f}%"}, type="warning")
                     
                     self.state = SimulationState.FLIGHT
                     self._logger.info(f'State: {self.state.value} - Engine ignited successfully!')

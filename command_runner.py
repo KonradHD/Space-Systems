@@ -55,3 +55,6 @@ class Runner():
                         print("Timeout")
                         break
                     print("Rakieta bezpiecznie wylądowała!") ## poprawić (przesłać informacje z simulatora do frontendu)
+
+    def reset(self):
+        self.cmd.reset()

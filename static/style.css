@@ -68,7 +68,8 @@ h1 {
     max-width: 900px;
 }
 
-.buttons-container, .slots-container {
+.buttons-container,
+.slots-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -102,12 +103,17 @@ h1 {
 /*  */
 
 .answer input[type="number"] {
-    width: 60px; /* szerokość inputu */
-    margin: 0 5px; /* odstęp od tekstu */
+    width: 60px;
+    /* szerokość inputu */
+    margin: 0 5px;
+    /* odstęp od tekstu */
     padding: 0px 8px;
-    border-radius: 8px; /* dopasowane do przycisku */
-    border: 1px solid #00cc66; /* pasujący kolor do gradientu */
-    background-color: rgb(98, 241, 110); /* lekko przezroczyste tło */
+    border-radius: 8px;
+    /* dopasowane do przycisku */
+    border: 1px solid #00cc66;
+    /* pasujący kolor do gradientu */
+    background-color: rgb(98, 241, 110);
+    /* lekko przezroczyste tło */
     color: white;
     font-size: 1rem;
     text-align: center;
@@ -116,12 +122,14 @@ h1 {
 .answer input[type="number"]::-webkit-inner-spin-button,
 .answer input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
-    margin: 0; /* usuwa strzałki w Chrome/Safari */
+    margin: 0;
+    /* usuwa strzałki w Chrome/Safari */
 }
 
 .answer input[type="number"]:focus {
     outline: none;
-    box-shadow: 0 0 5px #01f895; /* efekt podświetlenia przy focus */
+    box-shadow: 0 0 5px #01f895;
+    /* efekt podświetlenia przy focus */
 }
 
 
@@ -130,17 +138,19 @@ h1 {
 /*  */
 
 
-.valid-slot, .slot {
+.valid-slot,
+.slot {
     width: 180px;
     height: 60px;
     border: 2px dashed #aaa;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.1);
     transition: border-color 0.3s, background 0.3s;
-} 
+}
 
 
-.valid-slot.highlight, .slot.highlight {
+.valid-slot.highlight,
+.slot.highlight {
     border-color: #00ff99;
     background: rgba(0, 255, 150, 0.2);
 }
@@ -163,44 +173,34 @@ h1 {
 }
 
 
-/* #rocket-progress {
-    height: 600px;
-    width: 100%;
-    background-color: black;
-    color: white;
-} */
-
-/* === ROCKET STATUS PANEL === */
 #rocket-progress {
     position: relative;
     margin: 40px auto;
     padding: 20px 25px;
-    width: 420px;
+    width: 50%;
     max-height: 550px;
     overflow-y: auto;
-    
+
     background: rgba(20, 20, 30, 0.85);
     border: 2px solid rgba(0, 255, 170, 0.4);
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 255, 170, 0.25);
-    
+
     color: #e0f7ff;
     font-family: 'Courier New', monospace;
     line-height: 1.6;
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+    text-align: left;
 }
 
-#rocket-progress h3 {
-    color: #00ffc3;
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 255, 200, 0.3);
-    padding-bottom: 4px;
+#rocket-progress>h1 {
+    font-size: 2em;
 }
 
-#rocket-progress h5 {
-    margin-top: 16px;
-    margin-bottom: 6px;
+
+#rocket-progress h4 {
+    margin-top: 30px;
+    margin-bottom: -10px;
     color: #ffd859;
     font-size: 1.1rem;
     text-transform: uppercase;
@@ -227,11 +227,75 @@ h1 {
 
 /* Efekt animacji "pulsującego światła" */
 @keyframes pulse-glow {
-    0% { box-shadow: 0 0 10px rgba(0, 255, 170, 0.4); }
-    50% { box-shadow: 0 0 20px rgba(0, 255, 170, 0.8); }
-    100% { box-shadow: 0 0 10px rgba(0, 255, 170, 0.4); }
+    0% {
+        box-shadow: 0 0 10px rgba(0, 255, 170, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 170, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(0, 255, 170, 0.4);
+    }
 }
 
 #rocket-progress.active {
     animation: pulse-glow 2s infinite;
+}
+
+.rocket-progress ul {
+    list-style: none;
+    padding-left: 10px;
+    margin: 0;
+    border-left: 2px solid #45a29e;
+}
+
+.rocket-progress li {
+    padding: 6px 10px;
+    margin: 3px 0;
+    background: rgba(69, 162, 158, 0.1);
+    border-radius: 6px;
+}
+
+#rocket-progress h3 {
+    color: #ff4c4c;
+    /* intensywny czerwony kolor */
+    font-weight: 700;
+    font-size: 1.8rem;
+    background-color: rgba(255, 76, 76, 0.1);
+    /* delikatne czerwone tło */
+    border: 2px solid #ff4c4c;
+    border-left: 6px solid #ff1e1e;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    box-shadow: 0 0 8px rgba(255, 76, 76, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+#rocket-progress h5 {
+    color: #ffff4c;
+    /* intensywny czerwony kolor */
+    font-weight: 700;
+    font-size: 1.8rem;
+    background-color: rgba(255, 255, 76, 0.397);
+    /* delikatne czerwone tło */
+    border: 2px solid #f9ff4c;
+    border-left: 6px solid #ffec1e;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    box-shadow: 0 0 8px rgba(255, 246, 76, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+#rocket-progress>p {
+    font-size: 1.2em;
 }
