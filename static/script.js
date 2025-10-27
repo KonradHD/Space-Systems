@@ -231,7 +231,7 @@ dataBtn.addEventListener("click", async () => {
     }
 });
 
-// shuffleButtons();
+shuffleButtons();
 
 // --- DRAG START ---
 buttons.forEach(btn => {
