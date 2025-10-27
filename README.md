@@ -4,6 +4,17 @@ W ramach zadania rekrutacyjnego przygotowałem prostą grę/aplikację webową p
 
 W zadaniu wykorzystałem framework Flask jako lekki serwer backendowy, który obsługuje żądania HTTP do komunikacji z frontendem. Do przesyłania danych w czasie rzeczywistym zastosowaem technologię Server-Sent Events (SSE), dzięki której serwer może szybko przesyłać dane. Mechanizm ten działa w oparciu o Redis, który pełni rolę pośrednika między serwerem a klientami SSE.  
 
+## Setup
+Biblioteki potrzebne do uruchomienia aplikacji:
+```bash
+pip install flask
+pip install flask-sse
+```
+Instalacja Redisa na Linuxie:
+```bash
+sudo apt install redis-server
+```
+
 Uruchomienie aplikacji odbywa się w następujący sposób: 
 ```bash
-python app.py
+python3 app.py
