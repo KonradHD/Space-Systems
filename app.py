@@ -1,3 +1,4 @@
+import threading
 from flask import Flask, request, jsonify, render_template
 from command_runner import Runner
 import subprocess
@@ -48,6 +49,21 @@ def check():
         sse.publish({"status" : "error", "message" : str(e)}, type="error")
         proc.terminate()
         return jsonify({"status" : "error", "message" : str(e)})
+    
+    # def background_job():
+    #     try:
+    #         landing = runner.run_commands(slots)
+    #         if landing == 1:
+    #             sse.publish({"status": "Timeout", "message": "Check, if you registered data or opened appropriate waiting block."}, type="error")
+    #         elif landing == 2:
+    #             sse.publish({"status": "Interrupted", "message": "Check, if you are waiting till the rocket will land."}, type="warning")
+    #     except ValueError as e:
+    #         sse.publish({"status": "error", "message": str(e)}, type="error")
+    #         proc.terminate()
+
+    # thread = threading.Thread(target=background_job)
+    # thread.daemon = True
+    # thread.start()
     
     return jsonify({"status" : "ok"})
 

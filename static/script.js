@@ -231,7 +231,7 @@ dataBtn.addEventListener("click", async () => {
     }
 });
 
-shuffleButtons();
+// shuffleButtons();
 
 // --- DRAG START ---
 buttons.forEach(btn => {
@@ -273,6 +273,9 @@ document.getElementById('check').addEventListener('click', () => {
 
     initSSE();
     dataBtn.style.display = "none"
+    document.querySelector(".data-display").innerHTML = `
+        <h1>Statistics</h1>
+    `;
     const current = Array.from(vslots).map(vslot => {
         const btn = vslot.querySelector('.answer');
 
