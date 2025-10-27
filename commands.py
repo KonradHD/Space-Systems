@@ -16,9 +16,16 @@ def on_altitude(frame: Frame):
 class Command():
 
     def __init__(self):
-        self.oxidizer_level_data = {
-            "data" : [],
-            "time" : 0
+        self.data = {
+            "oxidizer_level_value" : 0,
+            "oxidizer_level_time" : 0,
+            "fuel_level_value" : 0,
+            "fuel_level_time" : 0,
+            "oxidizer_pressure_value" : 0,
+            "max_height_value" : 0,
+            "max_height_time" : 0,
+            "no_parachute_falling_distance" : 0,
+            "no_parachute_falling_time" : 0
         }
         self.cm = CommunicationManager()
         self.cm.change_transport_type(TransportType.TCP)
@@ -27,9 +34,6 @@ class Command():
     def connect(self):
         self.cm.connect(TcpSettings("127.0.0.1", 3000)) 
 
-
-    def get_oxidizer_level_data(self):
-        return self.oxidizer_level_data
 
     def open_oxidizer_intake(self):
         frame = Frame(ids.BoardID.ROCKET, 
@@ -63,7 +67,6 @@ class Command():
     
 
     def wait_till_oxidizer_level(self, value) -> bool:
-        print("wait_till_oxidizer_level")
         start_time = time.time()
         timeout = 20
 
@@ -71,11 +74,10 @@ class Command():
             try:
                 frame = self.cm.receive()
                 frame_dict = frame.as_dict()
-                if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1:
-                    self.oxidizer_level_data["data"].append(frame_dict["payload"][0])
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 1 and frame_dict["payload"][0] >= float(value):
                     self.close_oxidizer_intake()
-                    self.oxidizer_level_data["time"] = time.time() - start_time
+                    self.data["oxidizer_level_time"] = round(time.time() - start_time, 2)
+                    self.data["oxidizer_level_value"] = round(float(frame_dict["payload"][0]), 2)
                     return True
             except TransportTimeoutError:
                 pass
@@ -147,6 +149,8 @@ class Command():
                 frame_dict = frame.as_dict()
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 0 and frame_dict["payload"][0] >= float(value):
                     self.close_fuel_intake()
+                    self.data["fuel_level_time"] = round(time.time() - start_time, 2)
+                    self.data["fuel_level_value"] = round(float(frame_dict["payload"][0]), 2)
                     return True
             except TransportTimeoutError:
                 pass
@@ -205,7 +209,6 @@ class Command():
                            ())
         self.cm.push(frame)
         self.cm.send()
-        self.oxidizer_heater_open = True
 
 
     def wait_till_oxidizer_pressure(self, value) -> bool:
@@ -218,6 +221,8 @@ class Command():
                 frame_dict = frame.as_dict()
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 3 and frame_dict["payload"][0] >= float(value):
                     self.close_oxidizer_heater()
+                    self.data["oxidizer_pressure_time"] = round(time.time() - start_time, 2)
+                    self.data["oxidizer_pressure_value"] = round(float(frame_dict["payload"][0]), 2)
                     return True
             except TransportTimeoutError:
                 pass
@@ -312,6 +317,8 @@ class Command():
                     max_height = frame_dict["payload"][0]
 
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and frame_dict["payload"][0] < max_height:
+                    self.data["max_height_time"] = round(time.time() - start_time, 2)
+                    self.data["max_height_value"] = round(float(max_height), 2)
                     return True
             except TransportTimeoutError:
                 pass
@@ -335,9 +342,14 @@ class Command():
                 current_height = frame_dict["payload"][0]
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height > max_height:
                     max_height = frame_dict["payload"][0]
+                    self.data["max_height_time"] = round(time.time() - start_time, 2)
+                    self.data["max_height_value"] = round(float(max_height), 2)
+                    apogeum_time = time.time()
 
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height < max_height:
                     if current_height <= max_height - float(fall_distance):
+                        self.data["no_parachute_falling_time"] = round(time.time() - apogeum_time, 2)
+                        self.data["no_parachute_falling_distance"] = round(float(fall_distance), 2)
                         return True
             except TransportTimeoutError:
                 pass
@@ -426,6 +438,7 @@ class Command():
                            ())
         self.cm.push(frame)
         self.cm.send()
+        return True
 
 
     def close_parachute(self):
@@ -440,6 +453,7 @@ class Command():
                            ())
         self.cm.push(frame)
         self.cm.send()
+        return False
 
 
     def unregister_angle(self):
@@ -478,10 +492,11 @@ class Command():
                 current_height = frame_dict["payload"][0]
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height > max_height:
                     max_height = frame_dict["payload"][0]
+                    apogeum_time = time.time()
 
                 if frame_dict["device_type"] == 2 and frame_dict["device_id"] == 2 and current_height < max_height and current_height <= 10:
+                    self.data["falling_time"] = round(time.time() - apogeum_time, 2)
                     return True
-                print(max_height, current_height)
             except TransportTimeoutError:
                 pass
             except UnregisteredCallbackError as e:
@@ -498,3 +513,14 @@ class Command():
         self.unregister_fuel_level()
         self.unregister_oxidizer_level()
         self.unregister_oxidizer_pressure()
+        self.data = {
+            "oxidizer_level_value" : 0,
+            "oxidizer_level_time" : 0,
+            "fuel_level_value" : 0,
+            "fuel_level_time" : 0,
+            "oxidizer_pressure_value" : 0,
+            "max_height_value" : 0,
+            "max_height_time" : 0,
+            "no_parachute_falling_distance" : 0,
+            "no_parachute_falling_time" : 0
+        }

@@ -7,13 +7,10 @@ body {
     margin: 0;
     padding: 0;
     color: white;
-    overflow-x: hidden;
 }
 
 .background {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -36,7 +33,7 @@ h1 {
 }
 
 .rules {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     border: 2px solid #00c000;
     border-radius: 15px;
     padding: 20px;
@@ -54,13 +51,14 @@ h1 {
 
 .rules p {
     font-size: 1.2rem;
-    max-width: 100%;
+    max-width: 90%;
 }
 
 .big-rocket {
-    width: 150px;
+    width: 170px;
     border-radius: 10px;
     box-shadow: 0 0 20px #00c000;
+    /* dodanie poświaty spod zdjęcia */
 }
 
 .puzzle-zone {
@@ -81,7 +79,6 @@ h1 {
     background: linear-gradient(145deg, #009900, #00cc66);
     border: none;
     color: white;
-    /* padding: 12px 20px; */
     height: 100%;
     width: 100%;
     border-radius: 10px;
@@ -100,42 +97,32 @@ h1 {
     transform: scale(1.05);
 }
 
-/*  */
 
-.answer input[type="number"] {
+.answer input {
     width: 60px;
-    /* szerokość inputu */
     margin: 0 5px;
-    /* odstęp od tekstu */
     padding: 0px 8px;
     border-radius: 8px;
-    /* dopasowane do przycisku */
     border: 1px solid #00cc66;
-    /* pasujący kolor do gradientu */
     background-color: rgb(98, 241, 110);
-    /* lekko przezroczyste tło */
     color: white;
     font-size: 1rem;
     text-align: center;
 }
 
-.answer input[type="number"]::-webkit-inner-spin-button,
-.answer input[type="number"]::-webkit-outer-spin-button {
+
+.answer input::-webkit-inner-spin-button,
+.answer input::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
-    /* usuwa strzałki w Chrome/Safari */
 }
 
-.answer input[type="number"]:focus {
+
+.answer input:focus {
     outline: none;
     box-shadow: 0 0 5px #01f895;
-    /* efekt podświetlenia przy focus */
 }
 
-
-
-
-/*  */
 
 
 .valid-slot,
@@ -155,11 +142,6 @@ h1 {
     background: rgba(0, 255, 150, 0.2);
 }
 
-/* .menu {
-    display: flex;
-    position: relative;
-    justify-content: space-around;
-} */
 
 .btn {
     /* position: absolute; */
@@ -187,9 +169,14 @@ h1 {
     background: linear-gradient(to right, #00fc97, #007744);
 }
 
+.data-btn {
+    background: linear-gradient(to right, #fcfc00, #c1be00);
+}
+
 .check-btn:hover,
 .hint-btn:hover,
-.reset-btn:hover {
+.reset-btn:hover,
+.data-btn:hover {
     transform: scale(1.05);
 }
 
@@ -205,14 +192,14 @@ h1 {
     box-shadow: 0 0 15px #00fc97;
 }
 
+.data-btn:hover {
+    box-shadow: 0 0 15px #fcfc00;
+}
 
-
-#rocket-progress {
+.display {
     position: relative;
     margin: 40px auto;
     padding: 20px 25px;
-    width: 50%;
-    max-height: 630px;
     overflow-y: auto;
 
     background: rgba(20, 20, 30, 0.85);
@@ -227,8 +214,13 @@ h1 {
     text-align: left;
 }
 
+#rocket-progress {
+    width: 50%;
+    max-height: 630px;
+}
+
 #rocket-progress>h1 {
-    font-size: 2em;
+    font-size: 2rem;
 }
 
 
@@ -238,12 +230,11 @@ h1 {
     color: #ffd859;
     font-size: 1.1rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 #rocket-progress p {
     margin: 3px 0;
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
 #rocket-progress::-webkit-scrollbar {
@@ -259,46 +250,25 @@ h1 {
     background: rgba(0, 0, 0, 0.2);
 }
 
-/* Efekt animacji "pulsującego światła" */
-@keyframes pulse-glow {
-    0% {
-        box-shadow: 0 0 10px rgba(0, 255, 170, 0.4);
-    }
-
-    50% {
-        box-shadow: 0 0 20px rgba(0, 255, 170, 0.8);
-    }
-
-    100% {
-        box-shadow: 0 0 10px rgba(0, 255, 170, 0.4);
-    }
-}
-
-#rocket-progress.active {
-    animation: pulse-glow 2s infinite;
-}
 
 .rocket-progress ul {
     list-style: none;
     padding-left: 10px;
     margin: 0;
-    border-left: 2px solid #45a29e;
 }
 
 .rocket-progress li {
-    padding: 6px 10px;
-    margin: 3px 0;
-    background: rgba(69, 162, 158, 0.1);
-    border-radius: 6px;
+    padding: 10px;
 }
 
-#rocket-progress h3 {
+/* Error */
+.display h3 {
     color: #ff4c4c;
-    /* intensywny czerwony kolor */
+
     font-weight: 700;
     font-size: 1.8rem;
     background-color: rgba(255, 76, 76, 0.1);
-    /* delikatne czerwone tło */
+
     border: 2px solid #ff4c4c;
     border-left: 6px solid #ff1e1e;
     padding: 10px 14px;
@@ -311,13 +281,14 @@ h1 {
     text-transform: uppercase;
 }
 
-#rocket-progress h5 {
+/* Warning */
+.display h5 {
     color: #ffff4c;
-    /* intensywny czerwony kolor */
+
     font-weight: 700;
     font-size: 1.8rem;
     background-color: rgba(255, 255, 76, 0.397);
-    /* delikatne czerwone tło */
+
     border: 2px solid #f9ff4c;
     border-left: 6px solid #ffec1e;
     padding: 10px 14px;
@@ -330,13 +301,14 @@ h1 {
     text-transform: uppercase;
 }
 
-#rocket-progress h6 {
+/* Success */
+.display h6 {
     color: #4cff58;
-    /* intensywny czerwony kolor */
+
     font-weight: 700;
     font-size: 1.8rem;
     background-color: rgba(76, 255, 106, 0.37);
-    /* delikatne czerwone tło */
+
     border: 2px solid #4cff6d;
     border-left: 6px solid #1eff31;
     padding: 10px 14px;
@@ -349,7 +321,7 @@ h1 {
     text-transform: uppercase;
 }
 
-#rocket-progress>p {
+.display>p {
     font-size: 1.2em;
 }
 
@@ -370,7 +342,7 @@ h1 {
     transition: all 0.6s ease;
 }
 
-/* Dla różnych stanów */
+
 .pop-up.landed {
     background: linear-gradient(135deg, #00b300, #00ff66);
     box-shadow: 0 0 15px rgba(0, 255, 100, 0.5);
@@ -400,16 +372,13 @@ h1 {
     justify-content: space-evenly;
     align-items: center;
     margin: 20px;
-    /* gap: 150px; */
     justify-self: center;
 
 }
 
 .hints-container {
     width: fit-content;
-    /* stałe pole po prawej stronie */
     min-height: 40px;
-    /* wysokość miejsca na hint */
     height: 200px;
     padding: 20px;
     padding-top: 40px;
@@ -421,8 +390,6 @@ h1 {
     font-size: 0.9rem;
 
 
-    /* overflow-y: auto; */
-
     background: rgba(20, 20, 30, 0.85);
     border: 2px solid rgba(0, 255, 170, 0.4);
     border-radius: 15px;
@@ -433,10 +400,9 @@ h1 {
     line-height: 1.6;
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
     overflow: hidden;
-    /* <--- nic nie wychodzi poza kontener */
+    /* nic nie wychodzi poza kontener */
 }
 
-/* Ukrywanie hintów, będą zastępowane w tym samym miejscu */
 .hints-container p {
     display: none;
     position: absolute;
@@ -456,8 +422,28 @@ h1 {
     margin-bottom: 25px;
 }
 
-/* Efekt pojawienia się */
+
 .hints-container p.show {
     display: block;
     animation: fadeIn 0.9s ease;
+}
+
+.stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 70%;
+    margin: 80px auto;
+}
+
+.data-display {
+    height: 350px;
+    width: 40%;
+    margin: 0;
+    text-align: center;
+}
+
+#dataBtn {
+    display: none;
 }

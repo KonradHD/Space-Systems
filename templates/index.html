@@ -15,18 +15,18 @@
     <main>
         <h1>Rocket Game</h1>
         <section class="rules">
-            <h2>Zasady gry</h2>
+            <h2>Game rules</h2>
             <div>
-                <p>Ułóż puzle w odpowiedniej kolejności, tak żeby rakieta
-                    bezpiecznie wystartowała, a później wylądowała. Jeżeli to
-                    zadanie okazałoby się dla ciebie za trudne, skorzystaj z
-                    dostępnych podpowiedzi.</p>
+                <p>Arrange the pieces in the correct order so that the rocket
+                    takes off and lands safely. If this
+                    task proves too difficult for you, use
+                    the available hints.</p>
                 <img class="big-rocket" src="../static/images/rocket.png" alt="Big rocket photo">
             </div>
         </section>
 
         <section class="puzzle-zone">
-            <h2>Twoje zadanie</h2>
+            <h2>Puzzles</h2>
 
             <div class="buttons-container">
                 <div class="slot"><button class="b1 answer" draggable="true" data-type="void non parametric">Open
@@ -101,9 +101,9 @@
                         angle</button></div>
                 <div class="slot"><button class="b25 answer" draggable="true" data-type="void non parametric">Register
                         altitude</button></div>
-                <div class="slot"><button class="b26 answer" draggable="true" data-type="void non parametric">Open
+                <div class="slot"><button class="b26 answer" draggable="true" data-type="bool non parametric">Open
                         parachute</button></div>
-                <div class="slot"><button class="b27 answer" draggable="true" data-type="void non parametric">Close
+                <div class="slot"><button class="b27 answer" draggable="true" data-type="bool non parametric">Close
                         parachute</button></div>
                 <div class="slot"><button class="b28 answer" draggable="true" data-type="void non parametric">Unregister
                         angle</button></div>
@@ -119,7 +119,7 @@
                     </button>
                 </div>
             </div>
-            <h3>Ułóż kolejność:</h3>
+            <h3>Arrange the order: </h3>
             <div class="slots-container">
                 <div class="valid-slot" data-slot="1"></div>
                 <div class="valid-slot" data-slot="2"></div>
@@ -169,11 +169,11 @@
                     parachute.</p>
                 <button id="hint" class="hint-btn btn">Get hint</button>
             </div>
-            <button id="check" class="check-btn btn">Sprawdź ułożenie</button>
+            <button id="check" class="check-btn btn">Check solution</button>
             <button id="reset" class="reset-btn btn">Reset puzzles</button>
         </div>
 
-        <div id="rocket-progress">
+        <div id="rocket-progress" class="display">
             <pre>============================================================</pre>
             <h1>State: Waiting...</h1>
             <h4>Sensors:</h4>
@@ -200,6 +200,13 @@
             <h4>Velocity: 0.00 m/s</h4>
             <pre>============================================================</pre>
 
+        </div>
+
+        <div class="stats">
+            <button id="dataBtn" class="btn data-btn">Get statistics</button>
+            <div class="display data-display">
+                <h1>Statistics</h1>
+            </div>
         </div>
     </main>
     <div class="pop-up landed">Rocket landed</div>

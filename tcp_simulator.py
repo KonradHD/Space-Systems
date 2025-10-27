@@ -386,6 +386,8 @@ class StandaloneMock:
                     
                     if pressure < 40.0:
                         self._logger.error(f"Ignition failed: Oxidizer pressure too low ({pressure:.1f} bars) - engine won't ignite")
+                        with app.app_context():
+                            sse.publish({"status" : "EXPLOSION", "message" : f"Ignition failed: Oxidizer pressure too low ({pressure:.1f} bars) - engine won't ignite"}, type="fail")
                         self.igniter_start_time = None
                         return
                     
@@ -430,6 +432,9 @@ class StandaloneMock:
                     if self.velocity > 30.0:
                         self._logger.error(f'Parachute deployed at too high velocity ({self.velocity:.1f} m/s) during ascent - parachute ripped!')
                         self._logger.error('Continuing ballistic trajectory...')
+                        with app.app_context():
+                            sse.publish({"status" : "EXPLOSION", "message" : f'Parachute deployed at too high velocity ({self.velocity:.1f} m/s) during ascent - parachute ripped!'}, type="fail")
+                        
                     else:
                         self.state = SimulationState.PARACHUTE_DEPLOYED
                         self._logger.info(f'State: {self.state.value} - Early parachute deployment')
@@ -508,6 +513,8 @@ class StandaloneMock:
                 self.velocity = 0.0
                 self.state = SimulationState.LANDED
                 self._logger.error(f'State: {self.state.value} - CRASH LANDING!')
+                with app.app_context():
+                    sse.publish({"status" : "EXPLOSION", "message" : "CRASH LANDING!"}, type="fail")
                 self.print_rocket_status()
                 time.sleep(2)
                 self.should_run = False

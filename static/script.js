@@ -1,4 +1,35 @@
-let source = null
+function enableDropZones(zoneList) {
+    zoneList.forEach(vslot => {
+        vslot.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+        });
+
+        vslot.addEventListener('dragenter', () => {
+            if (!vslot.firstElementChild) {
+                vslot.classList.add('highlight');
+            }
+        });
+
+        vslot.addEventListener('dragleave', () => {
+            vslot.classList.remove('highlight');
+        });
+
+        vslot.addEventListener('drop', e => {
+            e.preventDefault();
+            vslot.classList.remove('highlight');
+
+            if (vslot.firstElementChild && vslot.firstElementChild !== dragged) return;
+
+            if (dragged) {
+                const oldParent = dragged.parentElement;
+                oldParent.classList.remove('highlight');
+                vslot.appendChild(dragged);
+            }
+        });
+    });
+}
+
 
 function showPopup(popup) {
     popup.classList.add("show");
@@ -12,6 +43,7 @@ function showPopup(popup) {
     }, 3100);
 }
 
+// function starting Server-Sent Event
 function initSSE() {
 
     if (source) {
@@ -23,34 +55,32 @@ function initSSE() {
         const data = JSON.parse(event.data);
         console.log("Ze streama: ", data.state);
 
-        // funkcja tworząca HTML z danych
         const container = document.querySelector('#rocket-progress');
 
-        // tworzymy listę dla sensorów
-        const sensorsHtml = Object.entries(data.sensors)
-            .map(([key, value]) => `<li>${key}: ${value}</li>`)
-            .join('');
-
-        // lista dla serwomechanizmów
-        const servosHtml = Object.entries(data.servos)
-            .map(([key, value]) => `<li>${key}: ${value}</li>`)
-            .join('');
-
-        // lista dla przekaźników
-        const relaysHtml = Object.entries(data.relays)
-            .map(([key, value]) => `<li>${key}: ${value}</li>`)
-            .join('');
-
-        // wstawiamy wszystko do diva
         container.innerHTML = `
             <pre>${data.rocketstatus}</pre>
             <h1>State: ${data.state}</h1>
             <h4>Sensors:</h4>
-            <ul>${sensorsHtml}</ul>
+            <ul>
+                <li>Fuel level: ${data.sensors.fuel_level}%</li>
+                <li>Oxidizer level: ${data.sensors.oxidizer_level}%</li>
+                <li>Oxidizer pressure: ${data.sensors.oxidizer_pressure} bar</li>
+                <li>Altitude: ${data.sensors.altitude} m</li>
+                <li>Angle: ${data.sensors.angle}°</li>
+            </ul>
             <h4>Servos:</h4>
-            <ul>${servosHtml}</ul>
+            <ul>
+                <li>Fuel intake: ${data.servos.fuel_intake}</li>
+                <li>Oxidizer intake: ${data.servos.oxidizer_intake}</li>
+                <li>Fuel main: ${data.servos.fuel_main}</li>
+                <li>Oxidizer main: ${data.servos.oxidizer_main}</li>
+            </ul>
             <h4>Relays:</h4>
-            <ul>${relaysHtml}</ul>
+            <ul>
+                <li>Oxidizer heater: ${data.relays.oxidizer_heater}</li>
+                <li>Igniter: ${data.relays.igniter}</li>
+                <li>Parachute: ${data.relays.parachute}</li>
+            </ul>
             <h4>Velocity: ${data.velocity} m/s</h4>
             <pre>${data["="]}</pre>
         `;
@@ -71,7 +101,7 @@ function initSSE() {
         }
 
         source.close();
-        console.warn("Połączenie SSE zostało zamknięte po błędzie.");
+        console.warn("SSE connection was closed after an error.");
     });
 
     source.addEventListener("warning", function (event) {
@@ -89,7 +119,7 @@ function initSSE() {
         }
 
         source.close();
-        console.warn("Połączenie SSE zostało zamknięte po ostrzeżeniu.");
+        console.warn("SSE connection was closed after a warning.");
     });
 
     source.addEventListener("success", function (event) {
@@ -107,8 +137,9 @@ function initSSE() {
         } catch (e) {
             console.error("Error:", e);
         }
+        dataBtn.style.display = "inline-block"
         source.close();
-        console.warn("Połączenie SSE zostało zamknięte po lądowaniu.");
+        console.warn("SSE connection was closed after landing.");
     });
 
     source.addEventListener("fail", function (event) {
@@ -127,24 +158,22 @@ function initSSE() {
             console.error("Error:", e);
         }
         source.close();
-        console.warn("Połączenie SSE zostało zamknięte po eksplozji.");
+        console.warn("SSE connection was closed after an explosion.");
     });
 }
 
 function shuffleButtons() {
     const slots = document.querySelectorAll('.slot');
     const buttons = Array.from(slots).map(slot => slot.querySelector('button'));
-
-    // Funkcja shuffle (Fisher-Yates)
+    //shuffle
     for (let i = buttons.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [buttons[i], buttons[j]] = [buttons[j], buttons[i]];
     }
 
-    // Wstawiamy losowo buttony z powrotem do slotów
     slots.forEach((slot, index) => {
-        slot.innerHTML = '';          // Czyścimy slot
-        slot.appendChild(buttons[index]); // Dodajemy wylosowany button
+        slot.innerHTML = ''; // Czyści slot
+        slot.appendChild(buttons[index]);
     });
 }
 
@@ -156,22 +185,53 @@ let ghost = null;
 const hints = document.querySelectorAll('.hints-container p');
 const hintBtn = document.getElementById('hint');
 let hintIndex = 0;
+let source = null
+const dataBtn = document.getElementById("dataBtn")
+
 
 hintBtn.addEventListener('click', () => {
-    // Ukrywamy poprzedni hint
+
     hints.forEach(h => h.style.display = 'none');
 
     if (hintIndex < hints.length) {
-        hints[hintIndex].style.display = 'block'; // pokazujemy kolejny
+        hints[hintIndex].style.display = 'block';
         hintIndex++;
     } else {
-        hintIndex = 0; // opcjonalnie: reset do pierwszego hintu
+        hintIndex = 0;
     }
 });
 
 
+dataBtn.addEventListener("click", async () => {
+    try {
+        const response = await fetch("/api/statistics");
+        if (!response.ok) throw new Error("Connection error");
 
-// shuffleButtons();
+        const data = await response.json();
+        console.log(data);
+
+        document.querySelector(".data-display").innerHTML = `
+        <h1>Statistics</h1>
+        <p><b>Starting oxidizer level: </b> ${data.oxidizer_level_value}%</p>
+        <p><b>Oxidizer filling time: </b> ${data.oxidizer_level_time} s</p>
+        <p><b>Starting fuel level: </b> ${data.fuel_level_value}%</p>
+        <p><b>Fuel filling time: </b> ${data.fuel_level_time} s</p>
+        <p><b>Starting oxidizer pressure: </b> ${data.oxidizer_pressure_value} bar</p>
+        <p><b>Oxidizer heating time: </b> ${data.oxidizer_pressure_time} s</p>
+        <p><b>Max height: </b> ${data.max_height_value} m</p>
+        <p><b>Rocket rising time: </b> ${data.max_height_time} s</p>
+        <p><b>Falling distance without parachute: </b> ${data.no_parachute_falling_distance} m</p>
+        <p><b>Falling time without parachute: </b> ${data.no_parachute_falling_time} s</p>
+    `;
+    } catch (error) {
+        console.error(error);
+        document.querySelector(".data-display").innerHTML = `
+        <h3>Error</h3>
+        <p>Message: Data was not provided.</p>`;
+    }
+});
+
+shuffleButtons();
 
 // --- DRAG START ---
 buttons.forEach(btn => {
@@ -194,7 +254,6 @@ buttons.forEach(btn => {
         dragged = null;
     });
 
-    // --- Zapobiegamy blokowaniu drag przez input ---
     const input = btn.querySelector('input');
     if (input) {
         input.addEventListener('mousedown', e => {
@@ -204,52 +263,16 @@ buttons.forEach(btn => {
 });
 
 
-function enableDropZones(zoneList) {
-    zoneList.forEach(vslot => {
-        vslot.addEventListener('dragover', e => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-        });
-
-        vslot.addEventListener('dragenter', () => {
-            if (!vslot.firstElementChild) {
-                vslot.classList.add('highlight');
-            }
-        });
-
-        vslot.addEventListener('dragleave', () => {
-            vslot.classList.remove('highlight');
-        });
-
-        vslot.addEventListener('drop', e => {
-            e.preventDefault();
-            vslot.classList.remove('highlight');
-
-            // jeśli slot ma już przycisk i to nie ten sam — blokuj
-            if (vslot.firstElementChild && vslot.firstElementChild !== dragged) return;
-
-            // przenieś przycisk do slotu
-            if (dragged) {
-                const oldParent = dragged.parentElement;
-                oldParent.classList.remove('highlight');
-                vslot.appendChild(dragged);
-            }
-        });
-    });
-}
-
-
-// Aktywujemy obsługę dla slotów i początkowej sekcji
+// aktywuje obsługę dla slotów i sekcji początkowej 
 enableDropZones(vslots);
 enableDropZones(homeSlots)
 
 
-// --- SPRAWDZENIE UŁOŻENIA ---
+
 document.getElementById('check').addEventListener('click', () => {
 
     initSSE();
-
-    // Pobieramy tekst + wartość input (jeśli jest)
+    dataBtn.style.display = "none"
     const current = Array.from(vslots).map(vslot => {
         const btn = vslot.querySelector('.answer');
 
@@ -267,7 +290,6 @@ document.getElementById('check').addEventListener('click', () => {
         };
     });
 
-    // wysyłka do backendu
     fetch('/api/check', {
         method: 'POST',
         headers: {
@@ -277,51 +299,25 @@ document.getElementById('check').addEventListener('click', () => {
     })
         .then(response => response.json())
         .then(data => {
-            console.log('Odpowiedź z backendu:', data);
+            console.log("Backend response", data);
         })
         .catch(error => {
-            console.error('Błąd przy wysyłaniu:', error);
+            console.error('Sending error:', error);
         });
 });
 
 document.getElementById("reset").addEventListener('click', () => {
-    // Wyczyść wszystkie sloty
+
+    dataBtn.style.display = "none"
     homeSlots.forEach(slot => slot.innerHTML = '');
 
-    // Wstaw po kolei każdy przycisk z powrotem do slotów
     buttons.forEach((btn, index) => {
         if (homeSlots[index]) {
             homeSlots[index].appendChild(btn);
         } else {
-            console.warn("Zabrakło slotów dla przycisku:", btn.textContent);
+            console.warn("There is not enough slots for buttons:", btn.textContent);
         }
     });
     shuffleButtons();
-    console.log("🔄 Wszystkie przyciski wróciły do slotów początkowych.");
+    console.log("All buttons came back to the starting slots.");
 });
-
-
-
-async function pollOxidizerData(url) {
-    while (true) {
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.status !== "pending") {
-                console.log("Gotowe dane:", data);
-                document.getElementById("rocket-progress").innerHTML = `
-                    <p> ${data.time}</p>
-                    `;
-                break;
-            }
-        } catch (err) {
-            console.error("Błąd fetch:", err);
-        }
-        await new Promise(resolve => setTimeout(resolve, 4000)); // czeka 4 sekundy
-    }
-}
-
-// pollOxidizerData("/api/oxidizer_data");
-
-
